@@ -1,0 +1,446 @@
+[
+    {
+        "id": "b219d3988f1c8656",
+        "type": "tab",
+        "label": "Final Project Flow",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "b03b90ff211a4101",
+        "type": "mysql",
+        "z": "b219d3988f1c8656",
+        "mydb": "68b5eb2f5924eb19",
+        "name": "Database",
+        "x": 820,
+        "y": 120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a00f195459524d1b",
+        "type": "function",
+        "z": "b219d3988f1c8656",
+        "name": "Adapt reading",
+        "func": "// Capturamos el sensor_id del mensaje original\nconst sensorId = msg.payload.sensor_id;\n\n// Genera fecha/hora actual en formato MySQL\nconst now = new Date();\nconst timestamp = now.toISOString().slice(0, 19).replace('T', ' ');\n\n// Genera una lectura según el sensor\nlet reading;\n\nif (sensorId == 6) {\n    reading = Math.floor(Math.random() * 31) + 50; // 50-80\n} else {\n    reading = msg.payload.reading;\n}\n\n// Filtro: si es sensor de proximidad (id 4 o 5) y reading >= 30, no insertar\nif ((sensorId === 1 || sensorId === 2) && reading >= 30) {\n    return null;\n}\n\n// Prepara la consulta SQL adaptada\nmsg.topic = `INSERT INTO sensor_events (sensor_id, timestamp, readings) \n             VALUES (${sensorId}, '${timestamp}', ${reading})`;\n\n// Carga útil para debug\nmsg.payload = {\n    sensor_id: sensorId,\n    timestamp: timestamp,\n    readings: reading,\n    status: \"OK\"\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 560,
+        "y": 120,
+        "wires": [
+            [
+                "b03b90ff211a4101"
+            ]
+        ]
+    },
+    {
+        "id": "266b460e9d96e5c0",
+        "type": "mqtt in",
+        "z": "b219d3988f1c8656",
+        "name": "",
+        "topic": "libguardian/sensors/prox",
+        "qos": "0",
+        "datatype": "json",
+        "broker": "43dd308be2425741",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 170,
+        "y": 80,
+        "wires": [
+            [
+                "a00f195459524d1b"
+            ]
+        ]
+    },
+    {
+        "id": "6ea92df24d874e84",
+        "type": "mqtt out",
+        "z": "b219d3988f1c8656",
+        "name": "",
+        "topic": "",
+        "qos": "0",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "43dd308be2425741",
+        "x": 690,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "1a407b98749bb3dd",
+        "type": "inject",
+        "z": "b219d3988f1c8656",
+        "name": "Entry Proxmity Sensor (id: 4)",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "libguardian/sensors/sound",
+        "payload": "{   \"sensor_id\": 4,   \"timestamp\": \"2025-05-29 10:20:00\",   \"reading\": 50 }",
+        "payloadType": "json",
+        "x": 220,
+        "y": 480,
+        "wires": [
+            [
+                "fd115ec6c50f45d1"
+            ]
+        ]
+    },
+    {
+        "id": "dcc8e78688f01ee1",
+        "type": "inject",
+        "z": "b219d3988f1c8656",
+        "name": "Exit Proximity Sensor (id: 5)",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "libguardian/sensors/sound",
+        "payload": "{   \"sensor_id\": 5,   \"timestamp\": \"2025-05-29 10:20:00\",   \"reading\": 50 }",
+        "payloadType": "json",
+        "x": 220,
+        "y": 560,
+        "wires": [
+            [
+                "fd115ec6c50f45d1"
+            ]
+        ]
+    },
+    {
+        "id": "5545c0fa9fa7c21e",
+        "type": "inject",
+        "z": "b219d3988f1c8656",
+        "name": "Noise Sensor (id: 6)",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "2",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "libguardian/sensors/sound",
+        "payload": "{   \"sensor_id\": 6,   \"timestamp\": \"2025-05-29 10:20:00\",   \"reading\": 65.3 }",
+        "payloadType": "json",
+        "x": 240,
+        "y": 640,
+        "wires": [
+            [
+                "fd115ec6c50f45d1"
+            ]
+        ]
+    },
+    {
+        "id": "f578424a6a2a38fa",
+        "type": "serial in",
+        "z": "b219d3988f1c8656",
+        "name": "Zolertia Serial",
+        "serial": "serial_port_conf",
+        "x": 150,
+        "y": 240,
+        "wires": [
+            [
+                "426fa679f3058a5f"
+            ]
+        ]
+    },
+    {
+        "id": "03555b2225a75fca",
+        "type": "json",
+        "z": "b219d3988f1c8656",
+        "name": "",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 490,
+        "y": 240,
+        "wires": [
+            [
+                "5221141378f0c591"
+            ]
+        ]
+    },
+    {
+        "id": "426fa679f3058a5f",
+        "type": "function",
+        "z": "b219d3988f1c8656",
+        "name": "Formatter",
+        "func": "let text = msg.payload;\n\n// Buscar el inicio del JSON (carácter '{')\nlet jsonStart = text.indexOf(\"{\");\n\nif (jsonStart !== -1) {\n    msg.payload = text.substring(jsonStart); // Extrae desde el primer '{' hasta el final\n    return msg;\n} else {\n    // Si no hay JSON, no enviar nada\n    return null;\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 240,
+        "wires": [
+            [
+                "03555b2225a75fca"
+            ]
+        ]
+    },
+    {
+        "id": "446681e0f9305960",
+        "type": "mqtt in",
+        "z": "b219d3988f1c8656",
+        "name": "",
+        "topic": "libguardian/sensors/sound",
+        "qos": "0",
+        "datatype": "json",
+        "broker": "43dd308be2425741",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 170,
+        "y": 140,
+        "wires": [
+            [
+                "a00f195459524d1b"
+            ]
+        ]
+    },
+    {
+        "id": "5221141378f0c591",
+        "type": "function",
+        "z": "b219d3988f1c8656",
+        "name": "dB converter",
+        "func": "let adc = msg.payload.reading; // valor ADC\nlet Vref = 5.0;                // voltaje máximo ADC\nlet sens = 0.05;               // sensibilidad micrófono en V/Pa (ejemplo 50mV/Pa)\nlet ganancia = 10;             // ganancia del circuito\n\n// Convertir ADC a voltios\nlet volts = (adc / 1023) * Vref;\n\n// Calcular presión sonora en Pascales (Pa)\n// Ajustamos por la ganancia y sensibilidad\nlet pressure = volts / (sens * ganancia);\n\n// Presión de referencia\nlet P0 = 20e-6; // 20 micropascales\n\n// Calcular dB SPL\nlet dB_SPL = 20 * Math.log10(pressure / P0);\n\n// Si quieres, redondear a 2 decimales\nmsg.payload.reading = dB_SPL.toFixed(2);\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 240,
+        "wires": [
+            [
+                "a00f195459524d1b"
+            ]
+        ]
+    },
+    {
+        "id": "fd115ec6c50f45d1",
+        "type": "json",
+        "z": "b219d3988f1c8656",
+        "name": "",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 530,
+        "y": 540,
+        "wires": [
+            [
+                "6ea92df24d874e84"
+            ]
+        ]
+    },
+    {
+        "id": "de992a6fa8dc26ca",
+        "type": "inject",
+        "z": "b219d3988f1c8656",
+        "name": "Caller",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "3",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 150,
+        "y": 340,
+        "wires": [
+            [
+                "11be0e7db7daef5e"
+            ]
+        ]
+    },
+    {
+        "id": "11be0e7db7daef5e",
+        "type": "function",
+        "z": "b219d3988f1c8656",
+        "name": "Select",
+        "func": "msg.topic = `\nSELECT \n    timestamp,\n    number_of_people\nFROM\n    people_movements\nWHERE\n    door_id = 1\nORDER BY \n    timestamp DESC\nLIMIT 1\n`;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 340,
+        "wires": [
+            [
+                "e8f5b89c81890473"
+            ]
+        ]
+    },
+    {
+        "id": "e8f5b89c81890473",
+        "type": "mysql",
+        "z": "b219d3988f1c8656",
+        "mydb": "68b5eb2f5924eb19",
+        "name": "Database",
+        "x": 520,
+        "y": 340,
+        "wires": [
+            [
+                "c6b05502e6f4ae9b"
+            ]
+        ]
+    },
+    {
+        "id": "6e4687afe94d92b0",
+        "type": "debug",
+        "z": "b219d3988f1c8656",
+        "name": "debug 8",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "c6b05502e6f4ae9b",
+        "type": "function",
+        "z": "b219d3988f1c8656",
+        "name": "function 4",
+        "func": "msg.payload = msg.payload[0].number_of_people;\nmsg.topic = \"libguardian/sensors/people\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 340,
+        "wires": [
+            [
+                "03de05b1db2291c5"
+            ]
+        ]
+    },
+    {
+        "id": "03de05b1db2291c5",
+        "type": "mqtt out",
+        "z": "b219d3988f1c8656",
+        "name": "",
+        "topic": "",
+        "qos": "0",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "43dd308be2425741",
+        "x": 870,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "68b5eb2f5924eb19",
+        "type": "MySQLdatabase",
+        "name": "LigGuardian",
+        "host": "127.0.0.1",
+        "port": "3306",
+        "db": "LibGuardian",
+        "tz": "",
+        "charset": "UTF8"
+    },
+    {
+        "id": "43dd308be2425741",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "broker.hivemq.com",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "serial_port_conf",
+        "type": "serial-port",
+        "name": "Zolertia 0897",
+        "serialport": "/dev/tty.usbserial-ZOL_RM01_A0879",
+        "serialbaud": "115200",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "waitfor": "",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": "",
+        "responsetimeout": "10000"
+    }
+]
