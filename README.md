@@ -251,7 +251,7 @@ cd LibGuardian
    - Verify all wireless devices can connect to your network
    - Test MQTT connectivity from ESP32 devices
 
-### Step 8: System Testing
+### Step 7: System Testing
 
 1. **Test individual components**:
    ```bash
