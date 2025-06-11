@@ -208,7 +208,11 @@ cd LibGuardian
    sudo systemctl start grafana-server  # Linux
    brew services start grafana          # macOS
    ```
-   tutorial link -> [https://grafana.com/docs/grafana/latest/setup-grafana/installation/]
+  If you have any doubts or problems follow the official tutorial to install Grafana locally:  
+   👉 https://grafana.com/docs/grafana/latest/setup-grafana/installation/
+
+ > [!NOTE]  
+ > You could also try using **Grafana Cloud** instead of hosting Grafana locally.
 
 2. **Access Grafana**:
    - Open http://localhost:3000
