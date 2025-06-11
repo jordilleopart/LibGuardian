@@ -97,6 +97,7 @@ cd LibGuardian
    ```bash
    mysql -u root -p libguardian < database/schema.sql
    ```
+  Alternatively, you can open the database/schema.sql file, copy its contents, and execute them manually in your MySQL client.
 
 ### Step 3: Hardware Programming
 
@@ -129,8 +130,10 @@ cd LibGuardian
    ```
 2. Compile and flash:
    ```bash
-   make TARGET=openmote-cc2538 sender
-   make TARGET=openmote-cc2538 sender.upload
+   make TARGET=openmote BOARD=openmote-b savetarget
+   make distclean
+   make sender.upload PORT=YOUR_PORT
+   make login PORT=YOUR_PORT
    ```
 
 #### Zolertia Receiver
@@ -140,37 +143,18 @@ cd LibGuardian
    ```
 2. Compile and flash:
    ```bash
-   make TARGET=zoul BOARD=firefly reciver
-   make TARGET=zoul BOARD=firefly reciver.upload
+   make TARGET=zoul BOARD=remote-reva reciver
+   make distclean
+   make reciver.upload PORT=YOUR_PORT
+   make login PORT=YOUR_PORT
    ```
 
-### Step 4: MQTT Broker Setup
+### Step 4: Node-RED Setup
 
-You can use HiveMQ Cloud (free tier) or set up your own broker:
-
-#### Option A: HiveMQ Cloud (Recommended for testing)
-1. Visit https://www.hivemq.com/mqtt-cloud-broker/
-2. Create a free account
-3. Note your broker URL and credentials
-
-#### Option B: Local Mosquitto Broker
-```bash
-# Ubuntu/Debian
-sudo apt install mosquitto mosquitto-clients
-
-# macOS
-brew install mosquitto
-
-# Start the broker
-mosquitto -v
-```
-
-### Step 5: Node-RED Setup
-
-1. **Install Node-RED**:
-   ```bash
-   npm install -g node-red
-   ```
+1. **Install Node-RED**  
+   Follow the official tutorial to install and set up Node-RED locally:  
+   👉 [https://nodered.org/docs/getting-started/local](https://nodered.org/docs/getting-started/local)
+  
 
 2. **Install required nodes**:
    ```bash
@@ -206,7 +190,7 @@ mosquitto -v
 7. **Deploy the flows**:
    - Click the red "Deploy" button in the top-right corner
 
-### Step 6: Grafana Setup
+### Step 5: Grafana Setup
 
 1. **Install Grafana**:
    ```bash
@@ -224,6 +208,7 @@ mosquitto -v
    sudo systemctl start grafana-server  # Linux
    brew services start grafana          # macOS
    ```
+   tutorial link -> [https://grafana.com/docs/grafana/latest/setup-grafana/installation/]
 
 2. **Access Grafana**:
    - Open http://localhost:3000
@@ -247,7 +232,7 @@ mosquitto -v
    - Paste and import
    - Select your MySQL data source when prompted
 
-### Step 7: Physical Installation
+### Step 6: Physical Installation
 
 1. **Sensor Placement**:
    - Install sound sensor in a central location of each room
@@ -367,18 +352,9 @@ We welcome contributions to LibGuardian! Please feel free to:
 - Submit pull requests
 - Improve documentation
 
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🙋‍♂️ Support
-
 For questions, issues, or support:
 - Open an issue on GitHub
 - Check the troubleshooting section above
 - Review Node-RED and Grafana documentation
 - Contact the development team
 
----
-
-**Built with ❤️ for smarter library management**
