@@ -40,6 +40,7 @@ LibGuardian consists of several interconnected components:
 - **MySQL**: Persistent data storage and analytics
 - **HiveMQ**: MQTT broker for real-time communication
 - **Grafana**: Interactive dashboards and data visualization
+- **Contiki-ng**: Operating system for IoT devices and wireless sensor networks
 
 ### Communication Flow
 1. Sensors collect noise and proximity data
@@ -99,7 +100,22 @@ cd LibGuardian
    ```
   Alternatively, you can open the database/schema.sql file, copy its contents, and execute them manually in your MySQL client.
 
-### Step 3: Hardware Programming
+### Step 3: Contiki-NG Setup
+
+To work with **Contiki-NG**, you need a compatible environment with a supported toolchain.
+
+- **macOS**: Follow the official installation guide for macOS:  
+  👉 [Toolchain Installation on macOS](https://docs.contiki-ng.org/en/develop/doc/getting-started/Toolchain-installation-on-macOS.html)
+
+- **Linux**: Follow the official installation guide for Linux:  
+  👉 [Toolchain Installation on Linux](https://docs.contiki-ng.org/en/develop/doc/getting-started/Toolchain-installation-on-Linux.html)
+
+- **Windows**: It’s recommended to create a **Linux-based virtual machine** (e.g., using VirtualBox or WSL2), then follow the Linux guide above.
+
+Official Contiki-NG documentation:  
+👉 [https://docs.contiki-ng.org](https://docs.contiki-ng.org)
+
+### Step 4: Hardware Programming
 
 #### Arduino Sound Sensor
 1. Open Arduino IDE
@@ -149,7 +165,7 @@ cd LibGuardian
    make login PORT=YOUR_PORT
    ```
 
-### Step 4: Node-RED Setup
+### Step 5: Node-RED Setup
 
 1. **Install Node-RED**  
    Follow the official tutorial to install and set up Node-RED locally:  
@@ -190,7 +206,7 @@ cd LibGuardian
 7. **Deploy the flows**:
    - Click the red "Deploy" button in the top-right corner
 
-### Step 5: Grafana Setup
+### Step 6: Grafana Setup
 
 1. **Install Grafana**:
    ```bash
@@ -236,7 +252,7 @@ cd LibGuardian
    - Paste and import
    - Select your MySQL data source when prompted
 
-### Step 6: Physical Installation
+### Step 7: Physical Installation
 
 1. **Sensor Placement**:
    - Install sound sensor in a central location of each room
@@ -251,7 +267,7 @@ cd LibGuardian
    - Verify all wireless devices can connect to your network
    - Test MQTT connectivity from ESP32 devices
 
-### Step 7: System Testing
+### Step 8: System Testing
 
 1. **Test individual components**:
    ```bash
